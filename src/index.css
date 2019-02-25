@@ -137,7 +137,7 @@ body {
     height: 100px;
     width: 100px;
     border-radius: 50%;
-    /*position: relative;*/
+    /* position: relative;*/
     /*bottom: 20px;  */
 }
 
@@ -147,11 +147,6 @@ body {
     overflow-y: hidden;
     margin-bottom: 20px;
 }
-/* Decorations
-/*.testimonial-group > .row > .col-xs-4 { color: #fff; font-size: 48px; padding-bottom: 20px; padding-top: 18px; }
-.testimonial-group > .row > .col-xs-4:nth-child(3n+1) { background: #c69; }
-.testimonial-group > .row > .col-xs-4:nth-child(3n+2) { background: #9c6; }
-.testimonial-group > .row > .col-xs-4:nth-child(3n+3) { background: #69c; }*/
 
 .App-header {
     background-color: #222;
@@ -208,4 +203,8 @@ body {
 .bottom-icon {
     font-size: 35px;
     line-height: 44px;
+}
+.simModal {
+    background-color: whitesmoke;
+    position: 'absolute';
 }

@@ -41,15 +41,8 @@ exports.addSimilarImages = functions.firestore.document('photos/{document}')
 		.then(res => console.log('dopples added'))
 		.catch(err => console.error(err));
 
-
 	})
 	.catch(err => console.error(err));
 
 })
 
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });

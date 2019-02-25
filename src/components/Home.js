@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Grid } from "@material-ui/core";
+import { Grid, withStyles } from "@material-ui/core";
 import { Link } from 'react-router-dom';
 import './App.css';
 import { logout } from '../helpers/auth';
@@ -7,10 +7,32 @@ import FileUploader from 'react-firebase-file-uploader';
 import firebase from 'firebase';
 import { ScaleLoader } from 'react-spinners';
 import Modal from '@material-ui/core/Modal';
+import PropTypes from 'prop-types';
 
+function getModalStyle() {
+    const top = 50;
+    const left = 50;
+  
+    return {
+      top: `${top}%`,
+      left: `${left}%`,
+      transform: `translate(-${top}%, -${left}%)`,
+    };
+}
+
+const styles = theme => ({
+    paper: {
+      position: 'absolute',
+      width: theme.spacing.unit * 50,
+      backgroundColor: theme.palette.background.paper,
+      boxShadow: theme.shadows[5],
+      padding: theme.spacing.unit * 4,
+      outline: 'none',
+    },
+  });
 
 const appTokenKey = "appToken";
-export default class Home extends Component {
+class Home extends Component {
 
     constructor(props) {
         super(props);
@@ -34,6 +56,7 @@ export default class Home extends Component {
         this.getInitial = this.getInitial.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
+        this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
     }
     handleClose() {
         this.setState({
@@ -127,6 +150,7 @@ export default class Home extends Component {
 
 
     render() {
+        const { classes } = this.props;
         const allImages = this.state.allPhotos.map(photo => {
 
             if (photo.similarImages) {
@@ -188,10 +212,15 @@ export default class Home extends Component {
                     <div className="scrolling-wrapper">
                     {this.dopples}
                     </div>
-                    <Modal open={this.state.showModal} onClose={this.handleClose}>
-                        <div>
+                    <Modal 
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
+                        open={this.state.showModal} 
+                        onClose={this.handleClose}
+                    >
+                        <div style={getModalStyle()} className={classes.paper}>
                             <header>
-                                <h2>Google said you look like...</h2>
+                                <h2>Similar Product</h2>
                             </header>
                             <img style={{ width: '100%' }} src={this.state.currentPhoto} />
                             <footer>
@@ -205,7 +234,7 @@ export default class Home extends Component {
         return (
             <div>
                 <h1>My Photos Feed</h1>
-                <h3>Want to know who Google thinks you look like? Upload a photo by clicking the middle button at the bottom to find out...</h3>
+                <h3> Upload a photo by clicking the middle button at the bottom.</h3>
                 {this.state.isMobile ? <h3>For selfies - rotate to landscape</h3>: ""} 
                 {allImages}
 
@@ -237,4 +266,8 @@ export default class Home extends Component {
         );
     }
 }
+Home.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
+export default withStyles(styles)(Home);
