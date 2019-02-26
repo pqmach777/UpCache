@@ -7,6 +7,7 @@ import FileUploader from 'react-firebase-file-uploader';
 import firebase from 'firebase';
 import { ScaleLoader } from 'react-spinners';
 import Modal from '@material-ui/core/Modal';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 function getModalStyle() {
@@ -30,6 +31,9 @@ const styles = theme => ({
       outline: 'none',
     },
   });
+const app = new Clarify.App({
+    api_key = '1c57e9c1d65d4cb887255e95683e95dc'
+})
 
 const appTokenKey = "appToken";
 class Home extends Component {
@@ -49,7 +53,8 @@ class Home extends Component {
             showModal: false,
             currentPhoto: '',
             isMobile: this.isMobile(),
-            imageRef: ''
+            imageRef: '',
+            value: ''
         }; 
 
         this.handleLogout = this.handleLogout.bind(this);
@@ -57,6 +62,7 @@ class Home extends Component {
         this.handleClose = this.handleClose.bind(this);
         this.handleRemove = this.handleRemove.bind(this);
         this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
+        this.handleReturnImage = this.handleReturnImage.bind(this);  
     }
     handleClose() {
         this.setState({
@@ -72,7 +78,7 @@ class Home extends Component {
       }    
   
   
-    componentDidMount() {
+      componentDidMount() {
         this.getInitial();
     }
 
@@ -90,9 +96,9 @@ class Home extends Component {
                 firebase.firestore().collection('photos').where('userId', '==', user.uid).onSnapshot(snapshot => {
                     let allPhotos = [];
                     snapshot.forEach(doc => {
-                    var newItem = doc.data();
-                    newItem.id = doc.id;
-                    allPhotos.push(newItem);
+                      var newItem = doc.data();
+                      newItem.id = doc.id;
+                      allPhotos.push(newItem);
                     });
 
                     console.log('allPhotos', allPhotos);
@@ -139,11 +145,33 @@ class Home extends Component {
 
             let photoAdded = await firebase.firestore().collection('photos').add(newPhoto);
             console.log('photoAdded', photoAdded);
+
+            app.public_models.general_model
+            .then(allModels => {
+                return allModels.predict(this.state.value);
+            })
+            .then(response => {
+                var concepts = response['outputs'][0]['data']['concepts'].filter(labels => {
+                  return labels.name && labels.value >= 0.9;
+                });
+                let image = {
+                    type: "image",
+                    link: this.state.value
+                };
+                this.props.generalLabelResults(image, concepts);
+            })
+            // .then(() => {
+            //     // this.props.history.push("/market");
+            // })
         } 
 
         catch(err) {
             console.error(err);
         }
+
+    }
+    
+    handleReturnImage(){
 
     }
   
@@ -266,8 +294,22 @@ class Home extends Component {
         );
     }
 }
+
+
+function mapStateToProps(state) {
+    return {
+        image: state.image,
+        labels: state.labels
+    };
+}
+function mapDispatchToProps(dispatch) {
+    return {
+        generalLabelResults: (image, labels) => dispatch(actionIngredientResults(image, labels))
+    }
+}
+
 Home.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles))(Home);

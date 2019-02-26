@@ -21,8 +21,9 @@ ReactDOM.render(
     <BaseLayout>
         <Router history={customHistory}>
             <Switch>
+                <Route exact path="/" component={App} />
                 <Route path="/login" component={Login} />
-                <Route path="/app/home" component={App} />
+                <Route path="/app/home" component={Home} />
                 <Redirect from="/" to="/login" />
             </Switch>
         </Router>

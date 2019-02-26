@@ -10,7 +10,7 @@ const db = admin.firestore();
 
 
 exports.addSimilarImages = functions.firestore.document('photos/{document}')
-.onCreate((snap, context) => {
+.onWrite((snap, context) => {
 
 	console.log('SNAP', snap)
 	console.log('CONTEXT', context)
@@ -41,8 +41,8 @@ exports.addSimilarImages = functions.firestore.document('photos/{document}')
 		.then(res => console.log('dopples added'))
 		.catch(err => console.error(err));
 
+
 	})
 	.catch(err => console.error(err));
 
 })
-

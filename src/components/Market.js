@@ -1,9 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-
-const API_KEY = process.env.REACT_APP_CLOUD_VISON_API_KEY;
-
-class Upload extends React.Component {
+class Market extends React.Component {
     constructor(props) {
         super(props);
         
@@ -20,4 +18,8 @@ class Upload extends React.Component {
 
 
 
-export default Upload
+Market.propTypes = {
+    
+};
+
+export default Market
