@@ -13,7 +13,6 @@ import PropTypes from 'prop-types';
 import Clarifai from 'clarifai';
 import actionLabelResults from '../actions/actionLabelResults';
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import { blue } from '@material-ui/core/colors';
 
 function getModalStyle() {
     const top = 50;

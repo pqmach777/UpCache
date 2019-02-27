@@ -12,6 +12,8 @@ import './index.css';
 import appReducers from './reducers/appReducers'
 import Home from './components/Home'
 import Labels from './components/Labels'
+import Market from './components/Market'
+
 const customHistory = createBrowserHistory();
 
 const store = createStore(appReducers,
