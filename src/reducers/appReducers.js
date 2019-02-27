@@ -11,14 +11,15 @@ function appReducers (state, action) {
     switch (action.type) {
         case "labelResults":
             return {
-                ...state,
                 image: {
                     type: action.image.type,
                     link: action.image.link
                 },
-                labels: action.labels
+                labels: action.labels,
             };
-        }
-
-
+        default:
+            return state;
+    }     
 }
+
+export default appReducers;

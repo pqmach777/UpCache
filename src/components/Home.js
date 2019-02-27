@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Grid, withStyles } from "@material-ui/core";
 import { Link } from 'react-router-dom';
 import './App.css';
@@ -7,8 +7,13 @@ import FileUploader from 'react-firebase-file-uploader';
 import firebase from 'firebase';
 import { ScaleLoader } from 'react-spinners';
 import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Clarifai from 'clarifai';
+import actionLabelResults from '../actions/actionLabelResults';
+import blueGrey from '@material-ui/core/colors/blueGrey';
+import { blue } from '@material-ui/core/colors';
 
 function getModalStyle() {
     const top = 50;
@@ -30,13 +35,20 @@ const styles = theme => ({
       padding: theme.spacing.unit * 4,
       outline: 'none',
     },
+    blueGrey: {
+        color: theme.palette.getContrastText(blueGrey[50]),
+        backgroundColor: blueGrey[50],
+        '&:hover': {
+          backgroundColor: blueGrey[100],
+        },    }
   });
-const app = new Clarify.App({
-    api_key = '1c57e9c1d65d4cb887255e95683e95dc'
+
+ const app = new Clarifai.App ({
+    apiKey : "1c57e9c1d65d4cb887255e95683e95dc"
 })
 
 const appTokenKey = "appToken";
-class Home extends Component {
+class Home extends React.Component {
 
     constructor(props) {
         super(props);
@@ -54,7 +66,7 @@ class Home extends Component {
             currentPhoto: '',
             isMobile: this.isMobile(),
             imageRef: '',
-            value: ''
+            src: '',
         }; 
 
         this.handleLogout = this.handleLogout.bind(this);
@@ -64,6 +76,8 @@ class Home extends Component {
         this.handleUploadSuccess = this.handleUploadSuccess.bind(this);
         this.handleReturnImage = this.handleReturnImage.bind(this);  
     }
+
+
     handleClose() {
         this.setState({
             showModal: false,
@@ -145,24 +159,7 @@ class Home extends Component {
 
             let photoAdded = await firebase.firestore().collection('photos').add(newPhoto);
             console.log('photoAdded', photoAdded);
-
-            app.public_models.general_model
-            .then(allModels => {
-                return allModels.predict(this.state.value);
-            })
-            .then(response => {
-                var concepts = response['outputs'][0]['data']['concepts'].filter(labels => {
-                  return labels.name && labels.value >= 0.9;
-                });
-                let image = {
-                    type: "image",
-                    link: this.state.value
-                };
-                this.props.generalLabelResults(image, concepts);
-            })
-            // .then(() => {
-            //     // this.props.history.push("/market");
-            // })
+            this.setState({ src: downloadURL});
         } 
 
         catch(err) {
@@ -172,7 +169,24 @@ class Home extends Component {
     }
     
     handleReturnImage(){
-
+        app.models.initModel({ id: Clarifai.GENERAL_MODEL, version: "aa9ca48295b37401f8af92ad1af0d91d" })
+        .then(allModels => {
+            return allModels.predict(this.state.src);
+        })
+        .then(response => {
+            var concepts = response['outputs'][0]['data']['concepts'].filter(labels => {
+                console.log(labels)
+                return labels.name && labels.value >= 0.9;
+            });
+            let image = {
+                type: "image",
+                link: this.state.src
+            };
+            this.props.generalLabelResults(image, concepts);
+        })
+        .then(() => {
+            this.props.history.push("/labels");
+        })
     }
   
 
@@ -190,7 +204,7 @@ class Home extends Component {
   
                 return (
                 <div
-                    onClick={() => this.setState({ showModal: true, currentPhoto: similarPhoto.url })}
+                    onClick={() => this.setState({ showModal: true, currentPhoto: similarPhoto.url, src: similarPhoto.url })}
                     style={styles}
                     className="main-photo card-1 card"
                     key={similarPhoto.url}
@@ -235,6 +249,8 @@ class Home extends Component {
                     <div style={{minHeight: '215px'}}>
                         <i onClick={() => this.handleRemove(photo.id)} className="bottom-icon material-icons main-close">close</i>
                         <img style={{ width: '100%' }} src={photo.url} />
+                        <Button variant="contained" onClick={() => this.setState({src: photo.url})} className={classes.blueGrey}>Get Image Url</Button>
+                        <Button variant="contained" onClick={this.handleReturnImage} className={classes.blueGrey}>Get Labels</Button>
                     </div>
 
                     <div className="scrolling-wrapper">
@@ -251,8 +267,9 @@ class Home extends Component {
                                 <h2>Similar Product</h2>
                             </header>
                             <img style={{ width: '100%' }} src={this.state.currentPhoto} />
+                            <Button variant="contained" onClick={this.handleReturnImage} className={classes.blueGrey}>Get Labels</Button>
                             <footer>
-                                <div onClick={this.handleClose}>Close</div>
+                                <Button onClick={this.handleClose}>Close</Button>
                             </footer>
                         </div>
                     </Modal>
@@ -271,7 +288,7 @@ class Home extends Component {
                         <Grid item xs={4} className="col-bottom">
                             <Link to="/app/album"><i className="bottom-icon material-icons">collections</i></Link>
                         </Grid>
-                        <Grid item xs={4} className="col-bottom">
+                        <Grid item xs={4} className="col-bottom" onClick={this.handleReturnImage}>
                         <label>
                             <i className="bottom-icon material-icons">camera_alt</i>
                             <FileUploader
@@ -304,7 +321,7 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        generalLabelResults: (image, labels) => dispatch(actionIngredientResults(image, labels))
+        generalLabelResults: (image, labels) => dispatch(actionLabelResults(image, labels))
     }
 }
 
@@ -312,4 +329,4 @@ Home.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles))(Home);
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(Home));

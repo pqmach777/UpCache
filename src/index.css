@@ -73,6 +73,7 @@ body {
     overflow-x: scroll;
     overflow-y: hidden;
     white-space: nowrap;
+    padding-bottom: 50px;
 }
 
 .scrolling-wrapper .main-photo.card-1.card {
@@ -185,7 +186,7 @@ body {
     position: fixed;
     bottom: 0;
     color: white;
-    background-color: black;
+    background-color: #3D59C6;
     max-width: 500px;
 }
 .col-bottom {
@@ -207,4 +208,15 @@ body {
 .simModal {
     background-color: whitesmoke;
     position: 'absolute';
+}
+#labelContainer {
+    border: 1px solid black;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #E0E1E1;
+    text-align: center;
+}
+
+#labelLeftCol {
+    border-right: 1px solid black;
 }

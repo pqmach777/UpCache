@@ -1,4 +1,5 @@
 const actionLabelResults = (image, labels) => {
+    console.log(labels)
     return {
         type: "labelResults",
         image: image,

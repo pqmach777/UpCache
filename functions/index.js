@@ -10,7 +10,7 @@ const db = admin.firestore();
 
 
 exports.addSimilarImages = functions.firestore.document('photos/{document}')
-.onWrite((snap, context) => {
+.onCreate((snap, context) => {
 
 	console.log('SNAP', snap)
 	console.log('CONTEXT', context)
