@@ -9,11 +9,6 @@ function appReducers (state, action) {
         }
     }
     switch (action.type) {
-        case "findLabel":
-            return{
-                ...state,
-                label: action.label
-            }
         case "labelResults":
             return {
                 ...state,
@@ -23,6 +18,19 @@ function appReducers (state, action) {
                 },
                 labels: action.labels,
             };
+        case "findLabel":
+            return{
+                ...state,
+                label: action.label
+            };
+        case "sendToAlbum":
+            return{
+                ...state,
+                image: {
+                    type: action.image.type,
+                    link: action.image.link
+                }
+            }
         default:
             return state;
     }     

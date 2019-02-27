@@ -12,7 +12,9 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Clarifai from 'clarifai';
 import actionLabelResults from '../actions/actionLabelResults';
+import sendToAlbum from '../actions/sendToAblum'
 import blueGrey from '@material-ui/core/colors/blueGrey';
+import { blue } from '@material-ui/core/colors';
 
 function getModalStyle() {
     const top = 50;
@@ -77,21 +79,16 @@ class Home extends React.Component {
     }
 
 
-    handleClose() {
-        this.setState({
-            showModal: false,
-            currentPhoto: ''
-        });
-      }
+
   
-      async handleRemove(id) {
+    async handleRemove(id) {
         console.log('photo id', id)
         await firebase.firestore().collection('photos').doc(id).delete();
         this.getInitial();
-      }    
+    }    
   
   
-      componentDidMount() {
+    componentDidMount() {
         this.getInitial();
     }
 
@@ -102,26 +99,24 @@ class Home extends React.Component {
             let userId = user.uid;
             let imageRef = `images/${userId}`;
 
-            this.setState({ imageRef });
-
+            this.setState({ imageRef })
+            
             if (user) {
-
+                
                 firebase.firestore().collection('photos').where('userId', '==', user.uid).onSnapshot(snapshot => {
                     let allPhotos = [];
                     snapshot.forEach(doc => {
-                      var newItem = doc.data();
-                      newItem.id = doc.id;
-                      allPhotos.push(newItem);
+                        var newItem = doc.data();
+                        newItem.id = doc.id;
+                        allPhotos.push(newItem);
                     });
 
                     console.log('allPhotos', allPhotos);
 
                     this.setState({ allPhotos });
                 });
-
             }
-
-        });
+        })
 
     }
 
@@ -160,11 +155,24 @@ class Home extends React.Component {
             console.log('photoAdded', photoAdded);
             this.setState({ src: downloadURL});
         } 
-
         catch(err) {
             console.error(err);
         }
 
+    }
+
+    handleClose() {
+        this.setState({
+            showModal: false,
+            currentPhoto: ''
+        });
+    }
+    handleSendToAlbum(){
+        let albumImage = {
+            type: "albumImage",
+            link: this.state.src
+        }
+        this.props.sendToAlbum(albumImage)
     }
     
     handleReturnImage(){
@@ -250,6 +258,7 @@ class Home extends React.Component {
                         <img style={{ width: '100%' }} src={photo.url} />
                         <Button variant="contained" onClick={() => this.setState({src: photo.url})} className={classes.blueGrey}>Get Image Url</Button>
                         <Button variant="contained" onClick={this.handleReturnImage} className={classes.blueGrey}>Get Labels</Button>
+                        <Button variant="contained" onClick={this.sendToAlbum} className={classes.blueGrey}> </Button>
                     </div>
 
                     <div className="scrolling-wrapper">
@@ -278,7 +287,7 @@ class Home extends React.Component {
         return (
             <div>
                 <h1>My Photos Feed</h1>
-                <h3> Upload a photo by clicking the middle button at the bottom.</h3>
+                <h4> Upload a photo by clicking the middle button at the bottom.</h4>
                 {this.state.isMobile ? <h3>For selfies - rotate to landscape</h3>: ""} 
                 {allImages}
 
@@ -320,8 +329,10 @@ function mapStateToProps(state) {
 }
 function mapDispatchToProps(dispatch) {
     return {
-        generalLabelResults: (image, labels) => dispatch(actionLabelResults(image, labels))
+        generalLabelResults: (image, labels) => dispatch(actionLabelResults(image, labels)),
+        sendToAlbum: (albumImage) => dispatch(sendToAlbum(albumImage))
     }
+    
 }
 
 Home.propTypes = {

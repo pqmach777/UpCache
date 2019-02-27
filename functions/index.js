@@ -8,7 +8,6 @@ const request = require('request');
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore();
 
-
 exports.addSimilarImages = functions.firestore.document('photos/{document}')
 .onCreate((snap, context) => {
 

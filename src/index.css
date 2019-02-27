@@ -13,6 +13,9 @@ body {
     width: 100%;
     background-color: silver;
 }
+p {
+    text-align: center;
+}
 .login-button {
     height: 100px;
     width: 100%;
@@ -53,7 +56,9 @@ body {
 
 
 
-
+h1, h2, h3, h4, h5, h6 {
+    text-align: center
+}
 
 
 .login-h1{

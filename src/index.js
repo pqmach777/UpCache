@@ -29,6 +29,7 @@ ReactDOM.render(
                     <Route path="/login" component={Login} />
                     <Route path="/app/home" component={Home} />
                     <Route path='/labels' component={Labels} />
+                    <Route path='/market' component={Market} />                 
                     <Redirect from="/" to="/login" />
                 </Switch>
             </Router>
