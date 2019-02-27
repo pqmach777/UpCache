@@ -9,8 +9,14 @@ function appReducers (state, action) {
         }
     }
     switch (action.type) {
+        case "findLabel":
+            return{
+                ...state,
+                label: action.label
+            }
         case "labelResults":
             return {
+                ...state,
                 image: {
                     type: action.image.type,
                     link: action.image.link

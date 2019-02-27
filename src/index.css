@@ -11,6 +11,7 @@ body {
     margin: 0 auto;
     height: 100vh;
     width: 100%;
+    background-color: silver;
 }
 .login-button {
     height: 100px;
@@ -46,13 +47,9 @@ body {
     max-width: 500px;
     margin: 0 auto;
     margin-bottom: 50px;
+    background-color: white;
 }
 
-/*#root {
-    max-width: 500px;
-    margin: 0 auto;
-    margin-bottom: 50px;
-}*/
 
 
 
@@ -75,7 +72,10 @@ body {
     white-space: nowrap;
     padding-bottom: 50px;
 }
-
+.labelContainer{
+    overflow-y: scroll;
+    position: relative;
+}
 .scrolling-wrapper .main-photo.card-1.card {
     display: inline-block !important;
     color: white;
@@ -218,5 +218,8 @@ body {
 }
 
 #labelLeftCol {
+    border-right: 1px solid black;
+}
+#labelMidCol{
     border-right: 1px solid black;
 }

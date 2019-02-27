@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { createStore} from "redux";
 import { Provider } from "react-redux";
+import App from "./components/App";
 import Login from './components/Login';
 import {Router, Redirect} from 'react-router'
 import {Switch,Route} from 'react-router-dom';
@@ -22,6 +23,7 @@ ReactDOM.render(
         <BaseLayout>
             <Router history={customHistory}>
                 <Switch>
+                    <Route exact path="/" component={App} />
                     <Route path="/login" component={Login} />
                     <Route path="/app/home" component={Home} />
                     <Route path='/labels' component={Labels} />
